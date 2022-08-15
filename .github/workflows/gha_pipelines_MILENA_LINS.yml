@@ -64,46 +64,10 @@ jobs:
         cache: maven
     - name: Testes Unitários
       run: mvn -B test --file pom.xml
-    
-  integration-tests:
-    name: Testes de Integração
-    needs: code-quality
-    runs-on: ubuntu-latest    
-    
-    steps:
-    - name: Simula execução de testes integrados
-      run: echo Testes integrados executados com sucesso
       
-  mutation-tests:
-    name: Testes de Mutação
-    needs: code-quality
-    runs-on: ubuntu-latest    
-    
-    steps:
-    - name: Simula execução de testes de mutação
-      run: echo Testes de mutação executados com sucesso      
-
-  regression-tests:
-    name: Testes de Regressão
-    needs: code-quality
-    runs-on: ubuntu-latest    
-    
-    steps:
-    - name: Simula execução de testes de regressão
-      run: echo Testes de regressão executados com sucesso      
-
-  functional-tests:
-    name: Testes Funcionais
-    needs: code-quality
-    runs-on: ubuntu-latest    
-    
-    steps:
-    - name: Simula execução de testes funcionais
-      run: echo Testes funcionais executados com sucesso         
-
   push-image:
     name: Enviar imagem Heroku
-    needs: [code-quality, sec-tests, tests,  integration-tests, mutation-tests, regression-tests, functional-tests]
+    needs: [code-quality, sec-tests, tests]
     runs-on: ubuntu-latest
     
     steps:
@@ -122,7 +86,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: registry.heroku.com/teste-app-java-devops/web:latest
+        tags: registry.heroku.com/desafio-app-java-devops/web:latest
 
   deploy:
     name: Publica ambiente Desenvolvimento
@@ -137,7 +101,7 @@ jobs:
         username: ${{ secrets.HEROKU_EMAIL }}
         password: ${{ secrets.HEROKU_API_KEY }}
     - name: Publicação
-      run: heroku container:release -a teste-app-java-devops web 
+      run: heroku container:release -a desafio-app-java-devops web 
       env:
         HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
